@@ -56,13 +56,19 @@ Ensure you have the following tools installed on your system:
    go mod download
    ```
 
-3. Build the application:
+3. Copy the example configuration file and modify it if necessary:
+
+   ```sh
+   cp config_example.yaml config.yaml
+   ```
+
+4. Build the application:
 
    ```sh
    go build
    ```
 
-4. Run the application:
+5. Run the application:
 
    ```sh
    ./tickets-api
