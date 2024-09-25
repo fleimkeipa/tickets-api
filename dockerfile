@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-# copy module files first so that they don't need to be downloaded again if no change
+# Copy Go module files to utilize cache and avoid re-downloading if no changes are detected
 COPY go.* ./
 RUN go mod download
 RUN go mod verify
