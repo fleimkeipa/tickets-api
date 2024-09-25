@@ -3,7 +3,7 @@ database:
   name: tickets-api
   username: postgres
   password: password
-  addr: localhost:5432
+  addr: localhost:5432 # postgres:5432 if api working on container
 
 # API service options
 api_service:
