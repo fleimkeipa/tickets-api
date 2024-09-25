@@ -18,8 +18,8 @@ services:
     image: postgres:latest # PostgreSQL image
     container_name: postgres-container
     environment:
-      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD # Set the Postgres password
-      - POSTGRES_DB=$POSTGRES_DB # Set the Postgres database
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=tickets-api
     ports:
       - "5432:5432" # Expose PostgreSQL on port 5432
     volumes:
