@@ -4,7 +4,7 @@ services:
   tickets-api:
     build: .
     # image: tickets-api:latest # Docker image for Go application
-    container_name: tickets-api-container
+    container_name: api-container
     volumes:
       - ./config.yaml:/app/config.yaml # Mount your local config.yaml to the container
     ports:
