@@ -8,6 +8,8 @@ import (
 	"github.com/fleimkeipa/tickets-api/controller"
 	_ "github.com/fleimkeipa/tickets-api/docs" // which is the generated folder after swag init
 	"github.com/fleimkeipa/tickets-api/pkg"
+	"github.com/fleimkeipa/tickets-api/repositories"
+	"github.com/fleimkeipa/tickets-api/uc"
 
 	"github.com/go-pg/pg"
 	"github.com/labstack/echo/v4"
@@ -39,6 +41,11 @@ func main() {
 	// Initialize PostgreSQL client
 	var dbClient = initDB()
 	defer dbClient.Close()
+
+	// Create Ticket handlers and related components
+	var ticketRepo = repositories.NewTicketRepository(dbClient)
+	var ticketUC = uc.NewTicketUC(ticketRepo)
+	var ticketHandler = controller.NewTicketHandler(ticketUC)
 
 	// Start the Echo application
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", viper.GetInt("api_service.port"))))
