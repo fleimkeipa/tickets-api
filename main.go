@@ -40,7 +40,11 @@ func main() {
 
 	// Initialize PostgreSQL client
 	var dbClient = initDB()
-	defer dbClient.Close()
+	defer func() {
+		if err := dbClient.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	// Create Ticket handlers and related components
 	var ticketRepo = repositories.NewTicketRepository(dbClient)
