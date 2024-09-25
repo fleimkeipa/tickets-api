@@ -1,0 +1,213 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/tickets": {
+            "post": {
+                "description": "This endpoint creates a new ticket by providing name, description, and allocation.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "CreateTicket creates a new ticket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Ticket creation input",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created ticket details",
+                        "schema": {
+                            "$ref": "#/definitions/models.Ticket"
+                        }
+                    },
+                    "400": {
+                        "description": "Error message including details on failure",
+                        "schema": {
+                            "$ref": "#/definitions/models.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}": {
+            "get": {
+                "description": "Retrieves a ticket from the database by its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Get a ticket by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID of the ticket",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Details of the requested ticket",
+                        "schema": {
+                            "$ref": "#/definitions/models.Ticket"
+                        }
+                    },
+                    "400": {
+                        "description": "Error message including details on failure",
+                        "schema": {
+                            "$ref": "#/definitions/models.FailureResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/purchase": {
+            "post": {
+                "description": "This endpoint purchases a new ticket by providing id and quantity.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "PurchaseTicket purchases a new ticket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Ticket purchase input",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PurchaseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Purchase successful, no content"
+                    },
+                    "400": {
+                        "description": "Error message including details on failure",
+                        "schema": {
+                            "$ref": "#/definitions/models.FailureResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.CreateRequest": {
+            "type": "object",
+            "required": [
+                "allocation",
+                "name"
+            ],
+            "properties": {
+                "allocation": {
+                    "type": "integer"
+                },
+                "desc": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 5
+                }
+            }
+        },
+        "models.FailureResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PurchaseRequest": {
+            "type": "object",
+            "required": [
+                "quantity",
+                "user_id"
+            ],
+            "properties": {
+                "quantity": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Ticket": {
+            "type": "object",
+            "properties": {
+                "allocation": {
+                    "type": "integer"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
