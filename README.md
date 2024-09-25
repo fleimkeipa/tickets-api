@@ -43,6 +43,8 @@ Ensure you have the following tools installed on your system:
 
 ### 📦 Building and Running the API
 
+####  Using Docker Compose
+
 1. Clone the repository:
 
    ```sh
@@ -50,25 +52,37 @@ Ensure you have the following tools installed on your system:
    cd tickets-api
    ```
 
-2. Install dependencies:
-
-   ```sh
-   go mod download
-   ```
-
-3. Copy the example configuration file and modify it if necessary:
+2. Copy the example configuration file and modify it if necessary:
 
    ```sh
    cp config_example.yaml config.yaml
    ```
 
-4. Build the application:
+3. Build and run the application using Docker Compose:
+
+   ```sh
+   docker-compose up --build -d
+   ```
+
+The application will now run in a Docker container and be accessible at the configured port!
+
+#### Running Locally
+
+If you prefer to run the application locally without Docker, follow these steps:
+
+1. Install dependencies:
+
+   ```sh
+   go mod download
+   ```
+
+2. Build the application:
 
    ```sh
    go build
    ```
 
-5. Run the application:
+3. Run the application:
 
    ```sh
    ./tickets-api
