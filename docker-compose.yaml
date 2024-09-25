@@ -1,19 +1,18 @@
 version: "3.9" # Docker Compose version
 
 services:
-  myapp:
-    image: tickets-api:latest # Docker image for Go application
-    container_name: myapp-container
+  tickets-api:
+    build: .
+    # image: tickets-api:latest # Docker image for Go application
+    container_name: tickets-api-container
     volumes:
       - ./config.yaml:/app/config.yaml # Mount your local config.yaml to the container
     ports:
       - "8080:8080" # Expose necessary ports
     depends_on:
-      - postgres # Ensure postgres service is started before myapp
+      - postgres # Ensure postgres service is started before tickets-api
     networks:
       - mynetwork
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
   postgres:
     image: postgres:latest # PostgreSQL image
