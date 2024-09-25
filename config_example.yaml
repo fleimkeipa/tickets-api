@@ -1,0 +1,10 @@
+# Database options
+database:
+  name: tickets-api
+  username: postgres
+  password: password
+  addr: localhost:5432
+
+# API service options
+api_service:
+  port: 8080
