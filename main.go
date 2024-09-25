@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/fleimkeipa/tickets-api/config"
+	"github.com/fleimkeipa/tickets-api/controller"
 	_ "github.com/fleimkeipa/tickets-api/docs" // which is the generated folder after swag init
 	"github.com/fleimkeipa/tickets-api/pkg"
 
@@ -28,6 +29,11 @@ func main() {
 
 	// Configure CORS middleware
 	configureCORS(e)
+
+	// Configure the logger
+	var sugar = configureLogger(e)
+	defer sugar.Sync() // Clean up logger at the end
+
 
 	// Start the Echo application
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", viper.GetInt("api_service.port"))))
@@ -58,3 +64,20 @@ func configureCORS(e *echo.Echo) {
 
 	e.Use(corsConfig)
 }
+
+// Configures the logger and adds it as middleware
+func configureLogger(e *echo.Echo) *zap.SugaredLogger {
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	e.Use(pkg.ZapLogger(logger))
+
+	var sugar = logger.Sugar()
+	var loggerHandler = controller.NewLogger(sugar)
+	e.Use(loggerHandler.LoggerMiddleware)
+
+	return sugar
+}
+
