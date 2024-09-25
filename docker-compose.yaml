@@ -1,0 +1,37 @@
+version: "3.9" # Docker Compose version
+
+services:
+  myapp:
+    image: tickets-api:latest # Docker image for Go application
+    container_name: myapp-container
+    volumes:
+      - ./config.yaml:/app/config.yaml # Mount your local config.yaml to the container
+    ports:
+      - "8080:8080" # Expose necessary ports
+    depends_on:
+      - postgres # Ensure postgres service is started before myapp
+    networks:
+      - mynetwork
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  postgres:
+    image: postgres:latest # PostgreSQL image
+    container_name: postgres-container
+    environment:
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD # Set the Postgres password
+      - POSTGRES_DB=$POSTGRES_DB # Set the Postgres database
+    ports:
+      - "5432:5432" # Expose PostgreSQL on port 5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data # Persistent storage for Postgres data
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  postgres-data:
+    driver: local
