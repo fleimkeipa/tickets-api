@@ -9,10 +9,12 @@ import (
 	_ "github.com/fleimkeipa/tickets-api/docs" // which is the generated folder after swag init
 	"github.com/fleimkeipa/tickets-api/pkg"
 
+	"github.com/go-pg/pg"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/viper"
 	swagger "github.com/swaggo/echo-swagger"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -34,6 +36,9 @@ func main() {
 	var sugar = configureLogger(e)
 	defer sugar.Sync() // Clean up logger at the end
 
+	// Initialize PostgreSQL client
+	var dbClient = initDB()
+	defer dbClient.Close()
 
 	// Start the Echo application
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", viper.GetInt("api_service.port"))))
@@ -81,3 +86,13 @@ func configureLogger(e *echo.Echo) *zap.SugaredLogger {
 	return sugar
 }
 
+// Initializes the PostgreSQL client
+func initDB() *pg.DB {
+	var db = pkg.NewPSQLClient()
+	if db == nil {
+		log.Fatal("Failed to initialize PostgreSQL client")
+	}
+
+	log.Println("PostgreSQL client initialized successfully")
+	return db
+}
