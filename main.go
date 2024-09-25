@@ -47,6 +47,12 @@ func main() {
 	var ticketUC = uc.NewTicketUC(ticketRepo)
 	var ticketHandler = controller.NewTicketHandler(ticketUC)
 
+	// Define Ticket routes
+	var ticketsRoutes = e.Group("/tickets")
+	ticketsRoutes.POST("", ticketHandler.CreateTicket)
+	ticketsRoutes.GET("/:id", ticketHandler.GetByID)
+	ticketsRoutes.POST("/:id/purchases", ticketHandler.PurchaseTicket)
+
 	// Start the Echo application
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", viper.GetInt("api_service.port"))))
 }
