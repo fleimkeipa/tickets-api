@@ -46,8 +46,8 @@ Ensure you have the following tools installed on your system:
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/fleimkeipa/ticket.git
-   cd ticket
+   git clone https://github.com/fleimkeipa/tickets-api.git
+   cd tickets-api
    ```
 
 2. Install dependencies:
@@ -65,7 +65,7 @@ Ensure you have the following tools installed on your system:
 4. Run the application:
 
    ```sh
-   ./ticket
+   ./tickets-api
    ```
 
 Now the API should be running and accessible at your configured port!
