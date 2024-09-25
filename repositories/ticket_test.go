@@ -1,0 +1,242 @@
+package repositories
+
+import (
+	"context"
+	"reflect"
+	"testing"
+
+	"github.com/fleimkeipa/tickets-api/models"
+
+	"github.com/go-pg/pg"
+	_ "github.com/lib/pq" // import postgres driver for testing
+)
+
+func TestTicketRepository_Create(t *testing.T) {
+	type fields struct {
+		db *pg.DB
+	}
+	type args struct {
+		ctx    context.Context
+		ticket *models.Ticket
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    *models.Ticket
+		wantErr bool
+	}{
+		{
+			name: "correct",
+			fields: fields{
+				db: test_db,
+			},
+			args: args{
+				ctx: context.TODO(),
+				ticket: &models.Ticket{
+					ID:          0,
+					Name:        "batman",
+					Description: "batman returns",
+					Allocation:  100,
+				},
+			},
+			want: &models.Ticket{
+				ID:          1,
+				Name:        "batman",
+				Description: "batman returns",
+				Allocation:  100,
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rc := &TicketRepository{
+				db: tt.fields.db,
+			}
+			got, err := rc.Create(tt.args.ctx, tt.args.ticket)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("TicketRepository.Create() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("TicketRepository.Create() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTicketRepository_Update(t *testing.T) {
+	type fields struct {
+		db *pg.DB
+	}
+	type args struct {
+		ctx    context.Context
+		ticket *models.Ticket
+	}
+	type tempData struct {
+		ticket *models.Ticket
+	}
+	tests := []struct {
+		name     string
+		fields   fields
+		tempData tempData
+		args     args
+		want     *models.Ticket
+		wantErr  bool
+	}{
+		{
+			name: "correct",
+			fields: fields{
+				db: test_db,
+			},
+			tempData: tempData{
+				ticket: &models.Ticket{
+					Name:        "joker",
+					Description: "joker down",
+					Allocation:  100,
+				},
+			},
+			args: args{
+				ctx: context.TODO(),
+				ticket: &models.Ticket{
+					ID:          1,
+					Name:        "joker",
+					Description: "joker up",
+					Allocation:  99,
+				},
+			},
+			want: &models.Ticket{
+				ID:          1,
+				Name:        "joker",
+				Description: "joker up",
+				Allocation:  99,
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := addTempData(tt.tempData.ticket); (err != nil) != tt.wantErr {
+				t.Errorf("TicketRepository.Update() addTempData error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			rc := &TicketRepository{
+				db: tt.fields.db,
+			}
+			got, err := rc.Update(tt.args.ctx, tt.args.ticket)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("TicketRepository.Update() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("TicketRepository.Update() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTicketRepository_GetByID(t *testing.T) {
+	type fields struct {
+		db *pg.DB
+	}
+	type args struct {
+		ctx context.Context
+		id  string
+	}
+	type tempDatas struct {
+		ticket []models.Ticket
+	}
+	tests := []struct {
+		name      string
+		tempDatas tempDatas
+		fields    fields
+		args      args
+		want      *models.Ticket
+		wantErr   bool
+	}{
+		{
+			name: "correct",
+			fields: fields{
+				db: test_db,
+			},
+			tempDatas: tempDatas{
+				ticket: []models.Ticket{
+					{
+						Name:        "devil",
+						Description: "devil may cry",
+						Allocation:  100,
+					},
+					{
+						Name:        "wanted",
+						Description: "wanted follows you",
+						Allocation:  23,
+					},
+				},
+			},
+			args: args{
+				ctx: context.TODO(),
+				id:  "1",
+			},
+			want: &models.Ticket{
+				ID:          1,
+				Name:        "devil",
+				Description: "devil may cry",
+				Allocation:  100,
+			},
+			wantErr: false,
+		},
+		{
+			name: "correct",
+			fields: fields{
+				db: test_db,
+			},
+			tempDatas: tempDatas{
+				ticket: []models.Ticket{
+					{
+						Name:        "devil",
+						Description: "devil may cry",
+						Allocation:  100,
+					},
+					{
+						Name:        "wanted",
+						Description: "wanted follows you",
+						Allocation:  23,
+					},
+				},
+			},
+			args: args{
+				ctx: context.TODO(),
+				id:  "2",
+			},
+			want: &models.Ticket{
+				ID:          2,
+				Name:        "wanted",
+				Description: "wanted follows you",
+				Allocation:  23,
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for _, v := range tt.tempDatas.ticket {
+				if err := addTempData(&v); (err != nil) != tt.wantErr {
+					t.Errorf("TicketRepository.GetByID() addTempData error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+			}
+			rc := &TicketRepository{
+				db: tt.fields.db,
+			}
+			got, err := rc.GetByID(tt.args.ctx, tt.args.id)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("TicketRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("TicketRepository.GetByID() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
