@@ -6,6 +6,7 @@ require (
 	github.com/go-pg/pg v8.0.7+incompatible
 	github.com/go-playground/validator/v10 v10.22.1
 	github.com/labstack/echo/v4 v4.12.0
+	github.com/lib/pq v1.10.9
 	github.com/spf13/viper v1.19.0
 	go.uber.org/zap v1.27.0
 )
