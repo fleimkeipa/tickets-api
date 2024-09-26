@@ -11,13 +11,13 @@ import (
 )
 
 func NewPSQLClient() *pg.DB {
-	var opts = pg.Options{
+	opts := pg.Options{
 		Database: viper.GetString("database.name"),
 		User:     viper.GetString("database.username"),
 		Password: viper.GetString("database.password"),
 		Addr:     viper.GetString("database.addr"),
 	}
-	var db = pg.Connect(&opts)
+	db := pg.Connect(&opts)
 
 	if err := createSchema(db); err != nil {
 		panic(err.Error())
@@ -27,12 +27,12 @@ func NewPSQLClient() *pg.DB {
 }
 
 func createSchema(db *pg.DB) error {
-	var models = []interface{}{
+	models := []interface{}{
 		(*models.Ticket)(nil),
 	}
 
 	for _, model := range models {
-		var opts = &orm.CreateTableOptions{
+		opts := &orm.CreateTableOptions{
 			IfNotExists: true,
 		}
 
