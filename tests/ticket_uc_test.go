@@ -226,6 +226,60 @@ func TestTicketUC_Purchase(t *testing.T) {
 			want:    nil,
 			wantErr: true,
 		},
+		{
+			name: "error - failed validation on user id",
+			fields: fields{
+				ticketRepo: testTicketRepo,
+				validator:  testTicketValidator,
+			},
+			tempDatas: tempDatas{
+				ticket: []models.Ticket{
+					{
+						ID:          1,
+						Name:        "starrynight",
+						Description: "starry night sky",
+						Allocation:  50,
+					},
+				},
+			},
+			args: args{
+				ctx: context.TODO(),
+				id:  "1",
+				ticket: &models.PurchaseRequest{
+					UserID:   "344b6d2d-599a-4b23-b358-8f26512079a9", // Invalid UserID
+					Quantity: -10,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "error - failed validation on negative quantity",
+			fields: fields{
+				ticketRepo: testTicketRepo,
+				validator:  testTicketValidator,
+			},
+			tempDatas: tempDatas{
+				ticket: []models.Ticket{
+					{
+						ID:          1,
+						Name:        "starrynight",
+						Description: "starry night sky",
+						Allocation:  50,
+					},
+				},
+			},
+			args: args{
+				ctx: context.TODO(),
+				id:  "1",
+				ticket: &models.PurchaseRequest{
+					UserID:   "", // Invalid UserID
+					Quantity: 5,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
