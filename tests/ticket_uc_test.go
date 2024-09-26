@@ -1,4 +1,4 @@
-package uc
+package tests
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"github.com/fleimkeipa/tickets-api/models"
 	"github.com/fleimkeipa/tickets-api/repositories"
 	"github.com/fleimkeipa/tickets-api/repositories/interfaces"
+	"github.com/fleimkeipa/tickets-api/uc"
 )
 
 var testTicketRepo interfaces.TicketInterfaces
@@ -75,9 +76,7 @@ func TestTicketUC_Purchase(t *testing.T) {
 					return
 				}
 			}
-			rc := &TicketUC{
-				ticketRepo: tt.fields.ticketRepo,
-			}
+			rc := uc.NewTicketUC(tt.fields.ticketRepo)
 			got, err := rc.Purchase(tt.args.ctx, tt.args.id, tt.args.ticket)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("TicketUC.Purchase() error = %v, wantErr %v", err, tt.wantErr)

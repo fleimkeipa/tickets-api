@@ -1,4 +1,4 @@
-package uc
+package tests
 
 import (
 	"database/sql"

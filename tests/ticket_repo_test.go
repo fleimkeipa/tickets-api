@@ -1,4 +1,4 @@
-package repositories
+package tests
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/fleimkeipa/tickets-api/models"
+	"github.com/fleimkeipa/tickets-api/repositories"
 
 	"github.com/go-pg/pg"
 	_ "github.com/lib/pq" // import postgres driver for testing
@@ -51,9 +52,7 @@ func TestTicketRepository_Create(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rc := &TicketRepository{
-				db: tt.fields.db,
-			}
+			rc := repositories.NewTicketRepository(tt.fields.db)
 			got, err := rc.Create(tt.args.ctx, tt.args.ticket)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("TicketRepository.Create() error = %v, wantErr %v", err, tt.wantErr)
@@ -121,9 +120,7 @@ func TestTicketRepository_Update(t *testing.T) {
 				t.Errorf("TicketRepository.Update() addTempData error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			rc := &TicketRepository{
-				db: tt.fields.db,
-			}
+			rc := repositories.NewTicketRepository(tt.fields.db)
 			got, err := rc.Update(tt.args.ctx, tt.args.ticket)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("TicketRepository.Update() error = %v, wantErr %v", err, tt.wantErr)
@@ -226,9 +223,7 @@ func TestTicketRepository_GetByID(t *testing.T) {
 					return
 				}
 			}
-			rc := &TicketRepository{
-				db: tt.fields.db,
-			}
+			rc := repositories.NewTicketRepository(tt.fields.db)
 			got, err := rc.GetByID(tt.args.ctx, tt.args.id)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("TicketRepository.GetByID() error = %v, wantErr %v", err, tt.wantErr)
