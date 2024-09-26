@@ -11,21 +11,21 @@ import (
 func ZapLogger(log *zap.Logger) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			var start = time.Now()
+			start := time.Now()
 
 			if err := next(c); err != nil {
 				c.Error(err)
 			}
 
-			var req = c.Request()
-			var res = c.Response()
+			req := c.Request()
+			res := c.Response()
 
-			var id = req.Header.Get(echo.HeaderXRequestID)
+			id := req.Header.Get(echo.HeaderXRequestID)
 			if id == "" {
 				id = res.Header().Get(echo.HeaderXRequestID)
 			}
 
-			var fields = []zapcore.Field{
+			fields := []zapcore.Field{
 				zap.Int("status", res.Status),
 				zap.String("latency", time.Since(start).String()),
 				zap.String("id", id),
@@ -35,7 +35,7 @@ func ZapLogger(log *zap.Logger) echo.MiddlewareFunc {
 				zap.String("remote_ip", c.RealIP()),
 			}
 
-			var n = res.Status
+			n := res.Status
 			switch {
 			case n >= 500:
 				log.Error("Server error", fields...)
