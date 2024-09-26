@@ -246,8 +246,8 @@ func TestTicketUC_Purchase(t *testing.T) {
 				ctx: context.TODO(),
 				id:  "1",
 				ticket: &models.PurchaseRequest{
-					UserID:   "344b6d2d-599a-4b23-b358-8f26512079a9", // Invalid UserID
-					Quantity: -10,
+					UserID:   "", // Invalid UserID
+					Quantity: 10,
 				},
 			},
 			want:    nil,
@@ -273,8 +273,8 @@ func TestTicketUC_Purchase(t *testing.T) {
 				ctx: context.TODO(),
 				id:  "1",
 				ticket: &models.PurchaseRequest{
-					UserID:   "", // Invalid UserID
-					Quantity: 5,
+					UserID:   "344b6d2d-599a-4b23-b358-8f26512079a9", // Invalid UserID
+					Quantity: -10,
 				},
 			},
 			want:    nil,
