@@ -17,6 +17,8 @@ import (
 
 var test_db *pg.DB
 
+const testDBName = "test_db"
+
 func loadEnv() {
 	if err := config.LoadEnv("../"); err != nil {
 		log.Fatalf("Error loading configuration: %v", err)
@@ -48,7 +50,7 @@ func init() {
 
 func initTestDBClient() *pg.DB {
 	var opts = pg.Options{
-		Database: viper.GetString("database.name"),
+		Database: testDBName,
 		User:     viper.GetString("database.username"),
 		Password: viper.GetString("database.password"),
 		Addr:     viper.GetString("database.addr"),
@@ -72,7 +74,7 @@ func createTestDB() {
 
 	var query = fmt.Sprintf(`
 		DROP DATABASE IF EXISTS %s;
-	`, "test_db")
+	`, testDBName)
 	_, err = db.Exec(query)
 	if err != nil {
 		log.Fatal(err)
@@ -80,7 +82,7 @@ func createTestDB() {
 
 	query = fmt.Sprintf(`
 		CREATE DATABASE %s;
-	`, "test_db")
+	`, testDBName)
 	_, err = db.Exec(query)
 	if err != nil {
 		log.Fatal(err)
