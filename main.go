@@ -26,7 +26,7 @@ func main() {
 	}
 
 	// Create a new Echo instance
-	var e = echo.New()
+	e := echo.New()
 
 	// Configure Echo settings
 	configureEcho(e)
@@ -35,26 +35,30 @@ func main() {
 	configureCORS(e)
 
 	// Configure the logger
-	var sugar = configureLogger(e)
-	defer sugar.Sync() // Clean up logger at the end
+	sugar := configureLogger(e)
+	defer func() {
+		if err := sugar.Sync(); err != nil { // Clean up logger at the end
+			log.Fatal(err)
+		}
+	}()
 
 	// Initialize PostgreSQL client
-	var dbClient = initDB()
+	dbClient := initDB()
 	defer func() {
 		if err := dbClient.Close(); err != nil {
 			log.Fatal(err)
 		}
 	}()
 
-	var validator = pkg.NewValidator()
+	validator := pkg.NewValidator()
 
 	// Create Ticket handlers and related components
-	var ticketRepo = repositories.NewTicketRepository(dbClient)
-	var ticketUC = uc.NewTicketUC(ticketRepo, validator)
-	var ticketHandler = controller.NewTicketHandler(ticketUC)
+	ticketRepo := repositories.NewTicketRepository(dbClient)
+	ticketUC := uc.NewTicketUC(ticketRepo, validator)
+	ticketHandler := controller.NewTicketHandler(ticketUC)
 
 	// Define Ticket routes
-	var ticketsRoutes = e.Group("/tickets")
+	ticketsRoutes := e.Group("/tickets")
 	ticketsRoutes.POST("", ticketHandler.CreateTicket)
 	ticketsRoutes.GET("/:id", ticketHandler.GetByID)
 	ticketsRoutes.POST("/:id/purchases", ticketHandler.PurchaseTicket)
@@ -77,7 +81,7 @@ func configureEcho(e *echo.Echo) {
 
 // Configures CORS settings
 func configureCORS(e *echo.Echo) {
-	var corsConfig = middleware.CORSWithConfig(middleware.CORSConfig{
+	corsConfig := middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{echo.GET, echo.POST},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
@@ -95,8 +99,8 @@ func configureLogger(e *echo.Echo) *zap.SugaredLogger {
 
 	e.Use(pkg.ZapLogger(logger))
 
-	var sugar = logger.Sugar()
-	var loggerHandler = controller.NewLogger(sugar)
+	sugar := logger.Sugar()
+	loggerHandler := controller.NewLogger(sugar)
 	e.Use(loggerHandler.LoggerMiddleware)
 
 	return sugar
@@ -104,11 +108,11 @@ func configureLogger(e *echo.Echo) *zap.SugaredLogger {
 
 // Initializes the PostgreSQL client
 func initDB() *pg.DB {
-	var db = pkg.NewPSQLClient()
-	if db == nil {
+	psqlDB := pkg.NewPSQLClient()
+	if psqlDB == nil {
 		log.Fatal("Failed to initialize PostgreSQL client")
 	}
 
 	log.Println("PostgreSQL client initialized successfully")
-	return db
+	return psqlDB
 }
