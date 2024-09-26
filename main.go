@@ -46,9 +46,11 @@ func main() {
 		}
 	}()
 
+	var validator = pkg.NewValidator()
+
 	// Create Ticket handlers and related components
 	var ticketRepo = repositories.NewTicketRepository(dbClient)
-	var ticketUC = uc.NewTicketUC(ticketRepo)
+	var ticketUC = uc.NewTicketUC(ticketRepo, validator)
 	var ticketHandler = controller.NewTicketHandler(ticketUC)
 
 	// Define Ticket routes
@@ -71,9 +73,6 @@ func configureEcho(e *echo.Echo) {
 
 	// Add Recover middleware
 	e.Use(middleware.Recover())
-
-	// Create a new validator instance
-	e.Validator = pkg.NewValidator()
 }
 
 // Configures CORS settings

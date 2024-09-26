@@ -42,13 +42,6 @@ func (rc *TicketHandler) CreateTicket(c echo.Context) error {
 		})
 	}
 
-	if err := c.Validate(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, models.FailureResponse{
-			Error:   fmt.Sprintf("Failed to validate: %v", err),
-			Message: "Invalid request format. Please check the input data and try again.",
-		})
-	}
-
 	ticket, err := rc.ticketUC.Create(c.Request().Context(), &request)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, models.FailureResponse{
@@ -79,13 +72,6 @@ func (rc *TicketHandler) PurchaseTicket(c echo.Context) error {
 	if err := c.Bind(&request); err != nil {
 		return c.JSON(http.StatusBadRequest, models.FailureResponse{
 			Error:   fmt.Sprintf("Failed to bind request: %v", err),
-			Message: "Invalid request format. Please check the input data and try again.",
-		})
-	}
-
-	if err := c.Validate(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, models.FailureResponse{
-			Error:   fmt.Sprintf("Failed to validate: %v", err),
 			Message: "Invalid request format. Please check the input data and try again.",
 		})
 	}

@@ -3,22 +3,30 @@ package uc
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/fleimkeipa/tickets-api/models"
+	"github.com/fleimkeipa/tickets-api/pkg"
 	"github.com/fleimkeipa/tickets-api/repositories/interfaces"
 )
 
 type TicketUC struct {
 	ticketRepo interfaces.TicketInterfaces
+	validator  *pkg.CustomValidator
 }
 
-func NewTicketUC(ticketRepo interfaces.TicketInterfaces) *TicketUC {
+func NewTicketUC(ticketRepo interfaces.TicketInterfaces, validator *pkg.CustomValidator) *TicketUC {
 	return &TicketUC{
 		ticketRepo: ticketRepo,
+		validator:  validator,
 	}
 }
 
 func (rc *TicketUC) Create(ctx context.Context, request *models.CreateRequest) (*models.Ticket, error) {
+	if err := rc.validator.Validate(request); err != nil {
+		return nil, fmt.Errorf("failed to validate create request: %w", err)
+	}
+
 	var ticket = models.Ticket{
 		Name:        request.Name,
 		Description: request.Description,
@@ -29,6 +37,10 @@ func (rc *TicketUC) Create(ctx context.Context, request *models.CreateRequest) (
 }
 
 func (rc *TicketUC) Purchase(ctx context.Context, id string, request *models.PurchaseRequest) (*models.Ticket, error) {
+	if err := rc.validator.Validate(request); err != nil {
+		return nil, fmt.Errorf("failed to validate purchase request: %w", err)
+	}
+
 	// ticket exist control
 	existTicket, err := rc.GetByID(ctx, id)
 	if err != nil {
