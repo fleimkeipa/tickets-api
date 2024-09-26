@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
+	_ "github.com/lib/pq" // import postgres driver for testing
 	"github.com/spf13/viper"
 )
 
