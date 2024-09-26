@@ -11,7 +11,7 @@ import (
 
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
-	_ "github.com/lib/pq" // import postgres driver for testing
+	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 )
 
@@ -111,6 +111,15 @@ func createTestSchema(db *pg.DB) error {
 
 func addTempData(data interface{}) error {
 	_, err := test_db.Model(data).Insert()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func clearTable() error {
+	_, err := test_db.Exec("TRUNCATE tickets; DELETE FROM tickets")
 	if err != nil {
 		return err
 	}
