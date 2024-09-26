@@ -9,7 +9,6 @@ import (
 	"github.com/fleimkeipa/tickets-api/repositories"
 
 	"github.com/go-pg/pg"
-	_ "github.com/lib/pq" // import postgres driver for testing
 )
 
 func TestTicketRepository_Create(t *testing.T) {
@@ -28,14 +27,14 @@ func TestTicketRepository_Create(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "correct",
+			name: "success",
 			fields: fields{
 				db: test_db,
 			},
 			args: args{
 				ctx: context.TODO(),
 				ticket: &models.Ticket{
-					ID:          0,
+					ID:          1,
 					Name:        "batman",
 					Description: "batman returns",
 					Allocation:  100,
@@ -85,12 +84,13 @@ func TestTicketRepository_Update(t *testing.T) {
 		wantErr  bool
 	}{
 		{
-			name: "correct",
+			name: "success",
 			fields: fields{
 				db: test_db,
 			},
 			tempData: tempData{
 				ticket: &models.Ticket{
+					ID:          1,
 					Name:        "joker",
 					Description: "joker down",
 					Allocation:  100,
@@ -113,10 +113,30 @@ func TestTicketRepository_Update(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "error - updating a non-existent ticket",
+			fields: fields{
+				db: test_db,
+			},
+			tempData: tempData{
+				ticket: &models.Ticket{},
+			},
+			args: args{
+				ctx: context.TODO(),
+				ticket: &models.Ticket{
+					ID:          3,
+					Name:        "joker",
+					Description: "joker up",
+					Allocation:  99,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := addTempData(tt.tempData.ticket); (err != nil) != tt.wantErr {
+			if err := addTempData(tt.tempData.ticket); err != nil {
 				t.Errorf("TicketRepository.Update() addTempData error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
@@ -218,7 +238,7 @@ func TestTicketRepository_GetByID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, v := range tt.tempDatas.ticket {
-				if err := addTempData(&v); (err != nil) != tt.wantErr {
+				if err := addTempData(&v); err != nil {
 					t.Errorf("TicketRepository.GetByID() addTempData error = %v, wantErr %v", err, tt.wantErr)
 					return
 				}
