@@ -133,7 +133,7 @@ func TestTicketUC_Purchase(t *testing.T) {
 		wantErr   bool
 	}{
 		{
-			name: "correct - corret quantity",
+			name: "success - corret quantity",
 			fields: fields{
 				ticketRepo: testTicketRepo,
 				validator:  testTicketValidator,
@@ -204,7 +204,7 @@ func TestTicketUC_Purchase(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "error - no available tickets",
+			name: "error - buying on zero allocation ticket",
 			fields: fields{
 				ticketRepo: testTicketRepo,
 				validator:  testTicketValidator,
@@ -213,8 +213,8 @@ func TestTicketUC_Purchase(t *testing.T) {
 				ticket: []models.Ticket{
 					{
 						ID:          1,
-						Name:        "monalisa",
-						Description: "do not look at her eyes",
+						Name:        "arrival",
+						Description: "never arrival",
 						Allocation:  0,
 					},
 				},
@@ -222,6 +222,33 @@ func TestTicketUC_Purchase(t *testing.T) {
 			args: args{
 				ctx: context.TODO(),
 				id:  "1",
+				ticket: &models.PurchaseRequest{
+					UserID:   "344b6d2d-599a-4b23-b358-8f26512079a9",
+					Quantity: 70,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "error - updating a non-existent ticket",
+			fields: fields{
+				ticketRepo: testTicketRepo,
+				validator:  testTicketValidator,
+			},
+			tempDatas: tempDatas{
+				ticket: []models.Ticket{
+					{
+						ID:          1,
+						Name:        "erik",
+						Description: "erik satie gnossienne no:1",
+						Allocation:  10,
+					},
+				},
+			},
+			args: args{
+				ctx: context.TODO(),
+				id:  "2",
 				ticket: &models.PurchaseRequest{
 					UserID:   "344b6d2d-599a-4b23-b358-8f26512079a9",
 					Quantity: 1,
@@ -252,6 +279,33 @@ func TestTicketUC_Purchase(t *testing.T) {
 				ticket: &models.PurchaseRequest{
 					UserID:   "", // Invalid UserID
 					Quantity: 10,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "error - failed validation on negative quantity",
+			fields: fields{
+				ticketRepo: testTicketRepo,
+				validator:  testTicketValidator,
+			},
+			tempDatas: tempDatas{
+				ticket: []models.Ticket{
+					{
+						ID:          1,
+						Name:        "starrynight",
+						Description: "starry night sky",
+						Allocation:  50,
+					},
+				},
+			},
+			args: args{
+				ctx: context.TODO(),
+				id:  "1",
+				ticket: &models.PurchaseRequest{
+					UserID:   "344b6d2d-599a-4b23-b358-8f26512079a9", // Invalid UserID
+					Quantity: -10,
 				},
 			},
 			want:    nil,
