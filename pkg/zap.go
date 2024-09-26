@@ -35,13 +35,13 @@ func ZapLogger(log *zap.Logger) echo.MiddlewareFunc {
 				zap.String("remote_ip", c.RealIP()),
 			}
 
-			n := res.Status
+			status := res.Status
 			switch {
-			case n >= 500:
+			case status >= 500:
 				log.Error("Server error", fields...)
-			case n >= 400:
+			case status >= 400:
 				log.Warn("Client error", fields...)
-			case n >= 300:
+			case status >= 300:
 				log.Info("Redirection", fields...)
 			default:
 				log.Info("Success", fields...)
