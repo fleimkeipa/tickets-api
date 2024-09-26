@@ -123,7 +123,12 @@ func TestTicketRepository_Update(t *testing.T) {
 				db: test_db,
 			},
 			tempData: tempData{
-				ticket: &models.Ticket{},
+				ticket: &models.Ticket{
+					ID:          1,
+					Name:        "joker",
+					Description: "joker up",
+					Allocation:  99,
+				},
 			},
 			args: args{
 				ctx: context.TODO(),
