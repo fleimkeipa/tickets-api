@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/fleimkeipa/tickets-api/models"
@@ -29,9 +30,13 @@ func (rc *TicketRepository) Create(ctx context.Context, ticket *models.Ticket) (
 }
 
 func (rc *TicketRepository) Update(ctx context.Context, ticket *models.Ticket) (*models.Ticket, error) {
-	_, err := rc.db.Model(ticket).WherePK().Update()
+	res, err := rc.db.Model(ticket).WherePK().Update()
 	if err != nil {
 		return nil, fmt.Errorf("failed to update ticket: %w", err)
+	}
+
+	if res.RowsAffected() == 0 {
+		return nil, errors.New("no ticket found for update")
 	}
 
 	return ticket, nil
