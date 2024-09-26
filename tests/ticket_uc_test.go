@@ -103,6 +103,10 @@ func TestTicketUC_Create(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("TicketUC.Create() = %v, want %v", got, tt.want)
 			}
+			if err := clearTable(); err != nil {
+				t.Errorf("TicketUC.Create() clearTable error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
 		})
 	}
 }
