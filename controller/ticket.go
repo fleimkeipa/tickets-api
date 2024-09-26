@@ -28,7 +28,7 @@ func NewTicketHandler(ticketUC *uc.TicketUC) *TicketHandler {
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
-//	@Param			body			body		models.CreateRequest	true	"Ticket creation input"
+//	@Param			body			{object}	models.CreateRequest	true	"Ticket creation input"
 //	@Success		201				{object}	models.Ticket			"Created ticket details"
 //	@Failure		400				{object}	models.FailureResponse	"Error message including details on failure"
 //	@Router			/tickets [post]
@@ -60,13 +60,13 @@ func (rc *TicketHandler) CreateTicket(c echo.Context) error {
 //	@Tags			tickets
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header	string					true	"Insert your access token"	default(Bearer <Add access token here>)
-//	@Param			body			body	models.PurchaseRequest	true	"Ticket purchase input"
+//	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
+//	@Param			body			{object}	models.PurchaseRequest	true	"Ticket purchase input"
 //	@Success		204				"Purchase successful, no content"
 //	@Failure		400				{object}	models.FailureResponse	"Error message including details on failure"
 //	@Router			/tickets/{id}/purchase [post]
 func (rc *TicketHandler) PurchaseTicket(c echo.Context) error {
-	var id = c.Param("id")
+	id := c.Param("id")
 
 	var request models.PurchaseRequest
 	if err := c.Bind(&request); err != nil {
@@ -101,7 +101,7 @@ func (rc *TicketHandler) PurchaseTicket(c echo.Context) error {
 //	@Failure		400				{object}	models.FailureResponse	"Error message including details on failure"
 //	@Router			/tickets/{id} [get]
 func (rc *TicketHandler) GetByID(c echo.Context) error {
-	var id = c.Param("id")
+	id := c.Param("id")
 
 	ticket, err := rc.ticketUC.GetByID(c.Request().Context(), id)
 	if err != nil {
