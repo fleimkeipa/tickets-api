@@ -27,7 +27,7 @@ func (rc *TicketUC) Create(ctx context.Context, request *models.CreateRequest) (
 		return nil, fmt.Errorf("failed to validate create request: %w", err)
 	}
 
-	var ticket = models.Ticket{
+	ticket := models.Ticket{
 		Name:        request.Name,
 		Description: request.Description,
 		Allocation:  request.Allocation,

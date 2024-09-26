@@ -43,7 +43,7 @@ func (rc *TicketRepository) Update(ctx context.Context, ticket *models.Ticket) (
 }
 
 func (rc *TicketRepository) GetByID(ctx context.Context, id string) (*models.Ticket, error) {
-	var ticket = new(models.Ticket)
+	ticket := new(models.Ticket)
 
 	err := rc.db.
 		Model(ticket).

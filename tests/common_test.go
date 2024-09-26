@@ -30,7 +30,7 @@ func loadEnv() {
 func init() {
 	loadEnv()
 
-	var addr = strings.Split(viper.GetString("database.addr"), ":")
+	addr := strings.Split(viper.GetString("database.addr"), ":")
 	if len(addr) < 2 {
 		viper.Set("database.host", "localhost")
 		viper.Set("database.port", "5432")
@@ -49,19 +49,19 @@ func init() {
 }
 
 func initTestDBClient() *pg.DB {
-	var opts = pg.Options{
+	opts := pg.Options{
 		Database: testDBName,
 		User:     viper.GetString("database.username"),
 		Password: viper.GetString("database.password"),
 		Addr:     viper.GetString("database.addr"),
 	}
-	var db = pg.Connect(&opts)
+	db := pg.Connect(&opts)
 
 	return db
 }
 
 func createTestDB() {
-	var conninfo = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable",
+	conninfo := fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable",
 		viper.GetString("database.username"),
 		viper.GetString("database.password"),
 		viper.GetString("database.host"),
@@ -72,7 +72,7 @@ func createTestDB() {
 		log.Fatal(err)
 	}
 
-	var query = fmt.Sprintf(`
+	query := fmt.Sprintf(`
 		DROP DATABASE IF EXISTS %s;
 	`, testDBName)
 	_, err = db.Exec(query)
@@ -91,12 +91,12 @@ func createTestDB() {
 
 // createSchema creates database schema for Ticket
 func createTestSchema(db *pg.DB) error {
-	var models = []interface{}{
+	models := []interface{}{
 		(*models.Ticket)(nil),
 	}
 
 	for _, model := range models {
-		var opts = orm.CreateTableOptions{
+		opts := orm.CreateTableOptions{
 			Temp:        true,
 			IfNotExists: true,
 		}
