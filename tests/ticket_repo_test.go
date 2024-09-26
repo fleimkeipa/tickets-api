@@ -60,6 +60,10 @@ func TestTicketRepository_Create(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("TicketRepository.Create() = %v, want %v", got, tt.want)
 			}
+			if err := clearTable(); err != nil {
+				t.Errorf("TicketRepository.Create() clearTable error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
 		})
 	}
 }
@@ -149,6 +153,10 @@ func TestTicketRepository_Update(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("TicketRepository.Update() = %v, want %v", got, tt.want)
 			}
+			if err := clearTable(); err != nil {
+				t.Errorf("TicketRepository.Update() clearTable error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
 		})
 	}
 }
@@ -173,18 +181,20 @@ func TestTicketRepository_GetByID(t *testing.T) {
 		wantErr   bool
 	}{
 		{
-			name: "correct",
+			name: "success",
 			fields: fields{
 				db: test_db,
 			},
 			tempDatas: tempDatas{
 				ticket: []models.Ticket{
 					{
+						ID:          1,
 						Name:        "devil",
 						Description: "devil may cry",
 						Allocation:  100,
 					},
 					{
+						ID:          2,
 						Name:        "wanted",
 						Description: "wanted follows you",
 						Allocation:  23,
@@ -204,18 +214,20 @@ func TestTicketRepository_GetByID(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "correct",
+			name: "success",
 			fields: fields{
 				db: test_db,
 			},
 			tempDatas: tempDatas{
 				ticket: []models.Ticket{
 					{
+						ID:          1,
 						Name:        "devil",
 						Description: "devil may cry",
 						Allocation:  100,
 					},
 					{
+						ID:          2,
 						Name:        "wanted",
 						Description: "wanted follows you",
 						Allocation:  23,
@@ -234,6 +246,28 @@ func TestTicketRepository_GetByID(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "error - finding a non-existent ticket",
+			fields: fields{
+				db: test_db,
+			},
+			tempDatas: tempDatas{
+				ticket: []models.Ticket{
+					{
+						ID:          1,
+						Name:        "devil",
+						Description: "devil may cry",
+						Allocation:  100,
+					},
+				},
+			},
+			args: args{
+				ctx: context.TODO(),
+				id:  "2",
+			},
+			want:    nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -251,6 +285,10 @@ func TestTicketRepository_GetByID(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("TicketRepository.GetByID() = %v, want %v", got, tt.want)
+			}
+			if err := clearTable(); err != nil {
+				t.Errorf("TicketRepository.GetByID() clearTable error = %v, wantErr %v", err, tt.wantErr)
+				return
 			}
 		})
 	}
