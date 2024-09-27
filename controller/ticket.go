@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/fleimkeipa/tickets-api/models"
@@ -29,25 +28,19 @@ func NewTicketHandler(ticketUC *uc.TicketUC) *TicketHandler {
 //	@Produce		json
 //	@Param			Authorization	header		string					true	"Insert your access token"	default(Bearer <Add access token here>)
 //	@Param			body			{object}	models.CreateRequest	true	"Ticket creation input"
-//	@Success		201				{object}	models.Ticket			"Created ticket details"
+//	@Success		201				{object}	models.TicketResponse			"Created ticket details"
 //	@Failure		400				{object}	models.FailureResponse	"Error message including details on failure"
 //	@Router			/tickets [post]
 func (rc *TicketHandler) CreateTicket(c echo.Context) error {
 	var request models.CreateRequest
 
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, models.FailureResponse{
-			Error:   fmt.Sprintf("Failed to bind request: %v", err),
-			Message: "Invalid request format. Please check the input data and try again.",
-		})
+		return HandleEchoError(c, err)
 	}
 
 	ticket, err := rc.ticketUC.Create(c.Request().Context(), &request)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, models.FailureResponse{
-			Error:   fmt.Sprintf("Failed to create ticket: %v", err),
-			Message: "Ticket creation failed. Please check the provided details and try again.",
-		})
+		return HandleEchoError(c, err)
 	}
 
 	response := fillTicketResponse(ticket)
@@ -72,18 +65,12 @@ func (rc *TicketHandler) PurchaseTicket(c echo.Context) error {
 
 	var request models.PurchaseRequest
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, models.FailureResponse{
-			Error:   fmt.Sprintf("Failed to bind request: %v", err),
-			Message: "Invalid request format. Please check the input data and try again.",
-		})
+		return HandleEchoError(c, err)
 	}
 
 	_, err := rc.ticketUC.Purchase(c.Request().Context(), id, &request)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, models.FailureResponse{
-			Error:   fmt.Sprintf("Failed to purchase ticket: %v", err),
-			Message: "Ticket purchae failed. Please check the provided details and try again.",
-		})
+		return HandleEchoError(c, err)
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -107,6 +94,9 @@ func (rc *TicketHandler) GetByID(c echo.Context) error {
 
 	ticket, err := rc.ticketUC.GetByID(c.Request().Context(), id)
 	if err != nil {
+		return HandleEchoError(c, err)
+	}
+
 	response := fillTicketResponse(ticket)
 
 	return c.JSON(http.StatusOK, response)
