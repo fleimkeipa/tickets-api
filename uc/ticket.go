@@ -2,8 +2,7 @@ package uc
 
 import (
 	"context"
-	"errors"
-	"fmt"
+	"net/http"
 
 	"github.com/fleimkeipa/tickets-api/models"
 	"github.com/fleimkeipa/tickets-api/pkg"
@@ -22,9 +21,10 @@ func NewTicketUC(ticketRepo interfaces.TicketInterfaces, validator *pkg.CustomVa
 	}
 }
 
+// Create creates a new ticket based on the provided create request data.
 func (rc *TicketUC) Create(ctx context.Context, request *models.CreateRequest) (*models.Ticket, error) {
 	if err := rc.validator.Validate(request); err != nil {
-		return nil, fmt.Errorf("failed to validate create request: %w", err)
+		return nil, pkg.NewError(err, "failed to validate create request", http.StatusBadRequest)
 	}
 
 	ticket := models.Ticket{
@@ -33,33 +33,50 @@ func (rc *TicketUC) Create(ctx context.Context, request *models.CreateRequest) (
 		Allocation:  request.Allocation,
 	}
 
-	return rc.ticketRepo.Create(ctx, &ticket)
+	t, err := rc.ticketRepo.Create(ctx, &ticket)
+	if err != nil {
+		return nil, pkg.NewError(err, "failed to create ticket", http.StatusInternalServerError)
+	}
+
+	return t, nil
 }
 
-func (rc *TicketUC) Purchase(ctx context.Context, id string, request *models.PurchaseRequest) (*models.Ticket, error) {
+// Purchase handles the purchasing of a ticket by the provided ticket ID.
+func (rc *TicketUC) Purchase(ctx context.Context, ticketID string, request *models.PurchaseRequest) (*models.Ticket, error) {
 	if err := rc.validator.Validate(request); err != nil {
-		return nil, fmt.Errorf("failed to validate purchase request: %w", err)
+		return nil, pkg.NewError(err, "failed to validate purchase request", http.StatusBadRequest)
 	}
 
 	// ticket exist control
-	existTicket, err := rc.GetByID(ctx, id)
+	existTicket, err := rc.GetByID(ctx, ticketID)
 	if err != nil {
-		return nil, err
+		return nil, pkg.NewError(err, "failed to find ticket", http.StatusNotFound)
 	}
 
 	if existTicket.Allocation == 0 {
-		return nil, errors.New("there is no available ticket now")
+		return nil, pkg.NewError(err, "there is no available ticket now", http.StatusBadRequest)
 	}
 
 	if existTicket.Allocation < request.Quantity {
-		return nil, errors.New("cannot afford this quantity")
+		return nil, pkg.NewError(err, "cannot afford this quantity", http.StatusBadRequest)
 	}
 
 	existTicket.Allocation -= request.Quantity
 
-	return rc.ticketRepo.Update(ctx, existTicket)
+	t, err := rc.ticketRepo.Update(ctx, existTicket)
+	if err != nil {
+		return nil, pkg.NewError(err, "failed to update ticket", http.StatusInternalServerError)
+	}
+
+	return t, nil
 }
 
-func (rc *TicketUC) GetByID(ctx context.Context, id string) (*models.Ticket, error) {
-	return rc.ticketRepo.GetByID(ctx, id)
+// GetByID retrieves a ticket by the provided ticket ID.
+func (rc *TicketUC) GetByID(ctx context.Context, ticketID string) (*models.Ticket, error) {
+	t, err := rc.ticketRepo.GetByID(ctx, ticketID)
+	if err != nil {
+		return nil, pkg.NewError(err, "failed to find ticket", http.StatusNotFound)
+	}
+
+	return t, nil
 }
