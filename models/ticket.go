@@ -7,6 +7,13 @@ type Ticket struct {
 	Allocation  int    `json:"allocation"`
 }
 
+type TicketResponse struct {
+	ID          int64  `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"desc"`
+	Allocation  int    `json:"allocation"`
+}
+
 type CreateRequest struct {
 	Name        string `json:"name" validate:"required,min=5,max=100"`
 	Description string `json:"desc" validate:"max=500"`
