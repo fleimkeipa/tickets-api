@@ -12,17 +12,17 @@ import (
 	"github.com/fleimkeipa/tickets-api/uc"
 )
 
-var (
-	testTicketRepo      interfaces.TicketInterfaces
-	testTicketValidator *pkg.CustomValidator
-)
+var testTicketValidator *pkg.CustomValidator
 
 func init() {
-	testTicketRepo = repositories.NewTicketRepository(test_db)
 	testTicketValidator = pkg.NewValidator()
 }
 
 func TestTicketUC_Create(t *testing.T) {
+	test_db, terminateDB = pkg.GetTestInstance(context.TODO())
+	defer terminateDB()
+
+	testTicketRepo := repositories.NewTicketRepository(test_db)
 	type fields struct {
 		ticketRepo interfaces.TicketInterfaces
 		validator  *pkg.CustomValidator
@@ -114,6 +114,10 @@ func TestTicketUC_Create(t *testing.T) {
 }
 
 func TestTicketUC_Purchase(t *testing.T) {
+	test_db, terminateDB = pkg.GetTestInstance(context.TODO())
+	defer terminateDB()
+
+	testTicketRepo := repositories.NewTicketRepository(test_db)
 	type fields struct {
 		ticketRepo interfaces.TicketInterfaces
 		validator  *pkg.CustomValidator
