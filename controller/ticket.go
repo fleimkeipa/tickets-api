@@ -50,7 +50,9 @@ func (rc *TicketHandler) CreateTicket(c echo.Context) error {
 		})
 	}
 
-	return c.JSON(http.StatusCreated, ticket)
+	response := fillTicketResponse(ticket)
+
+	return c.JSON(http.StatusCreated, response)
 }
 
 // PurchaseTicket godoc
@@ -105,11 +107,20 @@ func (rc *TicketHandler) GetByID(c echo.Context) error {
 
 	ticket, err := rc.ticketUC.GetByID(c.Request().Context(), id)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, models.FailureResponse{
-			Error:   fmt.Sprintf("Failed to retrieve ticket: %v", err),
-			Message: "Error fetching the ticket details. Please verify the ticket name or UID and try again.",
-		})
+	response := fillTicketResponse(ticket)
+
+	return c.JSON(http.StatusOK, response)
+}
+
+func fillTicketResponse(ticket *models.Ticket) *models.TicketResponse {
+	if ticket == nil {
+		return &models.TicketResponse{}
 	}
 
-	return c.JSON(http.StatusOK, ticket)
+	return &models.TicketResponse{
+		ID:          ticket.ID,
+		Name:        ticket.Name,
+		Description: ticket.Description,
+		Allocation:  ticket.Allocation,
+	}
 }
