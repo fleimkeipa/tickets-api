@@ -106,7 +106,7 @@ func TestTicketUC_Create(t *testing.T) {
 				t.Errorf("TicketUC.Create() = %v, want %v", got, tt.want)
 			}
 			if err := clearTable(); err != nil {
-				t.Errorf("TicketUC.Create() clearTable error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("TicketUC.Create() clearTable error = %v", err)
 				return
 			}
 		})
@@ -349,7 +349,7 @@ func TestTicketUC_Purchase(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, v := range tt.tempDatas.ticket {
 				if err := addTempData(&v); err != nil {
-					t.Errorf("TicketUC.Purchase() addTempData error = %v, wantErr %v", err, tt.wantErr)
+					t.Errorf("TicketUC.Purchase() addTempData error = %v", err)
 					return
 				}
 			}
@@ -363,7 +363,7 @@ func TestTicketUC_Purchase(t *testing.T) {
 				t.Errorf("TicketUC.Purchase() = %v, want %v", got, tt.want)
 			}
 			if err := clearTable(); err != nil {
-				t.Errorf("TicketUC.Purchase() clearTable error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("TicketUC.Purchase() clearTable error = %v", err)
 				return
 			}
 		})

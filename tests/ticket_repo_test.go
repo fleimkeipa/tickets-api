@@ -64,7 +64,7 @@ func TestTicketRepository_Create(t *testing.T) {
 				t.Errorf("TicketRepository.Create() = %v, want %v", got, tt.want)
 			}
 			if err := clearTable(); err != nil {
-				t.Errorf("TicketRepository.Create() clearTable error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("TicketRepository.Create() clearTable error = %v", err)
 				return
 			}
 		})
@@ -151,7 +151,7 @@ func TestTicketRepository_Update(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := addTempData(tt.tempData.ticket); err != nil {
-				t.Errorf("TicketRepository.Update() addTempData error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("TicketRepository.Update() addTempData error = %v", err)
 				return
 			}
 			rc := repositories.NewTicketRepository(tt.fields.db)
@@ -164,7 +164,7 @@ func TestTicketRepository_Update(t *testing.T) {
 				t.Errorf("TicketRepository.Update() = %v, want %v", got, tt.want)
 			}
 			if err := clearTable(); err != nil {
-				t.Errorf("TicketRepository.Update() clearTable error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("TicketRepository.Update() clearTable error = %v", err)
 				return
 			}
 		})
@@ -285,7 +285,7 @@ func TestTicketRepository_GetByID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, v := range tt.tempDatas.ticket {
 				if err := addTempData(&v); err != nil {
-					t.Errorf("TicketRepository.GetByID() addTempData error = %v, wantErr %v", err, tt.wantErr)
+					t.Errorf("TicketRepository.GetByID() addTempData error = %v", err)
 					return
 				}
 			}
@@ -299,7 +299,7 @@ func TestTicketRepository_GetByID(t *testing.T) {
 				t.Errorf("TicketRepository.GetByID() = %v, want %v", got, tt.want)
 			}
 			if err := clearTable(); err != nil {
-				t.Errorf("TicketRepository.GetByID() clearTable error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("TicketRepository.GetByID() clearTable error = %v", err)
 				return
 			}
 		})
