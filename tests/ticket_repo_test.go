@@ -6,12 +6,15 @@ import (
 	"testing"
 
 	"github.com/fleimkeipa/tickets-api/models"
+	"github.com/fleimkeipa/tickets-api/pkg"
 	"github.com/fleimkeipa/tickets-api/repositories"
 
 	"github.com/go-pg/pg"
 )
 
 func TestTicketRepository_Create(t *testing.T) {
+	test_db, terminateDB = pkg.GetTestInstance(context.TODO())
+	defer terminateDB()
 	type fields struct {
 		db *pg.DB
 	}
@@ -69,6 +72,8 @@ func TestTicketRepository_Create(t *testing.T) {
 }
 
 func TestTicketRepository_Update(t *testing.T) {
+	test_db, terminateDB = pkg.GetTestInstance(context.TODO())
+	defer terminateDB()
 	type fields struct {
 		db *pg.DB
 	}
@@ -167,6 +172,8 @@ func TestTicketRepository_Update(t *testing.T) {
 }
 
 func TestTicketRepository_GetByID(t *testing.T) {
+	test_db, terminateDB = pkg.GetTestInstance(context.TODO())
+	defer terminateDB()
 	type fields struct {
 		db *pg.DB
 	}
