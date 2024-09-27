@@ -7,7 +7,7 @@ import (
 )
 
 type TicketInterfaces interface {
-	Create(context.Context, *models.Ticket) (*models.Ticket, error)
-	Update(context.Context, *models.Ticket) (*models.Ticket, error)
-	GetByID(context.Context, string) (*models.Ticket, error)
+	Create(ctx context.Context, ticket *models.Ticket) (*models.Ticket, error)
+	Update(ctx context.Context, ticket *models.Ticket) (*models.Ticket, error)
+	GetByID(ctx context.Context, ticketID string) (*models.Ticket, error)
 }
