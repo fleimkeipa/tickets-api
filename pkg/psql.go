@@ -15,6 +15,7 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
+// NewPSQLClient initializes and returns a PostgreSQL client using pg package.
 func NewPSQLClient() *pg.DB {
 	opts := pg.Options{
 		Database: viper.GetString("database.name"),
@@ -31,7 +32,7 @@ func NewPSQLClient() *pg.DB {
 	return db
 }
 
-// createTables creates database tables for Ticket
+// createTables creates tables for the provided models.
 func createTables(db *pg.DB) error {
 	models := []interface{}{
 		(*models.Ticket)(nil),
@@ -39,7 +40,7 @@ func createTables(db *pg.DB) error {
 
 	for _, model := range models {
 		opts := &orm.CreateTableOptions{
-			IfNotExists: true,
+			IfNotExists: true, // Ensures the table is created only if it doesn't exist.
 		}
 
 		if err := db.Model(model).CreateTable(opts); err != nil {
@@ -50,6 +51,7 @@ func createTables(db *pg.DB) error {
 	return nil
 }
 
+// GetTestInstance starts a PostgreSQL container for testing and returns a connected pg.DB client along with a cleanup function.
 func GetTestInstance(ctx context.Context) (*pg.DB, func()) {
 	const mongoVersion = "17.0"
 	const port = "5432"
@@ -57,13 +59,13 @@ func GetTestInstance(ctx context.Context) (*pg.DB, func()) {
 	req := testcontainers.ContainerRequest{
 		Image:        fmt.Sprintf("postgres:%s", mongoVersion),
 		ExposedPorts: []string{fmt.Sprintf("%s/tcp", port)},
-		WaitingFor:   wait.ForListeningPort(port),
+		WaitingFor:   wait.ForListeningPort(port), // Wait until the port is ready
 		Env: map[string]string{
 			"POSTGRES_USER":     "postgres",
 			"POSTGRES_PASSWORD": "password",
 			"POSTGRES_DB":       "test_db",
 		},
-		Cmd: []string{"postgres", "-c", "fsync=off"},
+		Cmd: []string{"postgres", "-c", "fsync=off"}, // Disable fsync for performance in tests
 	}
 	psqlClient, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
@@ -100,7 +102,7 @@ func GetTestInstance(ctx context.Context) (*pg.DB, func()) {
 	}
 }
 
-// createTestTables creates database test tables for Ticket
+// createTestTables creates temporary test tables for the provided models.
 func createTestTables(db *pg.DB) error {
 	models := []interface{}{
 		(*models.Ticket)(nil),
@@ -108,7 +110,7 @@ func createTestTables(db *pg.DB) error {
 
 	for _, model := range models {
 		opts := orm.CreateTableOptions{
-			Temp:        true,
+			Temp:        true, // Creates a temporary table for testing purposes.
 			IfNotExists: true,
 		}
 		err := db.
