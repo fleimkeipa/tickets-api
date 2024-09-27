@@ -2,9 +2,6 @@ package controller
 
 import (
 	"bytes"
-	"encoding/json"
-
-	"github.com/fleimkeipa/tickets-api/models"
 
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
@@ -64,13 +61,9 @@ func (rc *Logger) LoggerMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return err
 		}
 
-		// After the handler, check if there was an error in the response.
-		var failureResponse models.FailureResponse
-		if json.Unmarshal(writer.body.Bytes(), &failureResponse) == nil {
-			// If the response contains an error, log it.
-			if failureResponse.Error != "" {
-				rc.logger.Errorf("Error logged: %v", failureResponse.Error)
-			}
+		responseString := writer.body.String()
+		if responseString != "" {
+			rc.logger.Errorf("Error logged: %s", responseString)
 		}
 
 		return err
