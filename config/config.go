@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Function to load YAML file using Viper
+// LoadEnv to load YAML file using Viper
 func LoadEnv(path string) error {
 	if path == "" {
 		path = "."
