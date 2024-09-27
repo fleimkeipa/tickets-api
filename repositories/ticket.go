@@ -20,6 +20,7 @@ func NewTicketRepository(db *pg.DB) *TicketRepository {
 	}
 }
 
+// Create inserts a new ticket into the database based on the provided ticket data.
 func (rc *TicketRepository) Create(ctx context.Context, ticket *models.Ticket) (*models.Ticket, error) {
 	_, err := rc.db.Model(ticket).Insert()
 	if err != nil {
@@ -29,6 +30,7 @@ func (rc *TicketRepository) Create(ctx context.Context, ticket *models.Ticket) (
 	return ticket, nil
 }
 
+// Update updates an existing ticket in the database.
 func (rc *TicketRepository) Update(ctx context.Context, ticket *models.Ticket) (*models.Ticket, error) {
 	res, err := rc.db.Model(ticket).WherePK().Update()
 	if err != nil {
@@ -42,6 +44,7 @@ func (rc *TicketRepository) Update(ctx context.Context, ticket *models.Ticket) (
 	return ticket, nil
 }
 
+// GetByID retrieves a ticket from the database based on the provided ticket ID.
 func (rc *TicketRepository) GetByID(ctx context.Context, id string) (*models.Ticket, error) {
 	ticket := new(models.Ticket)
 
